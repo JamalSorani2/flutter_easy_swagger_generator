@@ -19,6 +19,7 @@ DartTypeInfo getDartType({
   required TProperty? schema,
   required Components components,
   required bool isForEntities,
+  required String parameterName,
 }) {
   if (schema == null) {
     return DartTypeInfo(className: 'dynamic', schema: null);
@@ -29,12 +30,14 @@ DartTypeInfo getDartType({
   // Handle array types
   if (schema is ArrayProperty) {
     final itemType = getDartType(
+      parameterName: parameterName,
       schema: schema.items,
       components: components,
       isForEntities: isForEntities,
     );
     final ref = schema.items?.ref;
-    final refLast = ref?.split('/').last.split('.').last;
+    final refLast =
+        ref?.split('/').last.split('.').last.toCamelCase().toPascalCase();
     return DartTypeInfo(
       className: 'List<${refLast ?? itemType.className}>',
       schema: schema.items,
@@ -50,14 +53,18 @@ DartTypeInfo getDartType({
 
     // Shared reference types
     return DartTypeInfo(
-      className: refParts.last + endPoint,
+      className: refParts.last.toCamelCase().toPascalCase() + endPoint,
       schema: schema,
       isSubclass: true,
     );
   }
 
   // Handle primitive Swagger types
-  return _type(schema.type.name, schema);
+  return _type(
+    schema.type.name,
+    schema,
+    parameterName,
+  );
 }
 
 /// Maps a Swagger primitive type string to its Dart equivalent.
@@ -69,12 +76,12 @@ DartTypeInfo getDartType({
 /// - anything else → `dynamic`
 DartTypeInfo _type(
   String? type,
-  TProperty schema, {
+  TProperty schema,
   String? enumName,
-}) {
+) {
   if (enumName != null && (schema.enumValues.isNotEmpty)) {
     return DartTypeInfo(
-      className: "${enumName}GlobalEnum",
+      className: "${enumName.toPascalCase()}GlobalEnum",
       schema: schema,
       isEnum: true,
     );

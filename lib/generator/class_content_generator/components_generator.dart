@@ -88,6 +88,7 @@ class ComponentsGenerator {
     for (var param in properties) {
       String paramName = param.propertyName;
       DartTypeInfo dartTypeInfo = getDartType(
+        parameterName: paramName,
         schema: param.schema,
         components: components,
         isForEntities: isForEntities,

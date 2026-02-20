@@ -1,39 +1,16 @@
 /// Represents a primitive schema property (e.g., string, integer, number, boolean).
-///
 /// Captures optional `format`, `enum` values, and `default` when present.
-class PrimitiveProperty implements TProperty {
-  @override
-  final TPropertyType type;
-
-  @override
-  final String? ref;
-
-  @override
-  final bool nullable;
-
-  @override
-  final String? format;
-
-  @override
-  final dynamic defaultValue;
-
-  @override
-  final List<String> enumValues;
-
-  @override
-  final TProperty? items;
-
+class PrimitiveProperty extends TProperty {
   PrimitiveProperty({
-    required this.type,
-    this.ref,
-    required this.nullable,
-    this.format,
-    required this.enumValues,
-    this.defaultValue,
-    this.items,
+    required super.type,
+    super.ref,
+    required super.nullable,
+    super.format,
+    super.defaultValue,
+    required super.enumValues,
+    super.items,
   });
 
-  /// Creates a [PrimitiveProperty] from a JSON Schema fragment.
   factory PrimitiveProperty.fromJson(Map<String, dynamic> json) {
     late TPropertyType tPropertyType;
     if (json['format'] == "binary") {
@@ -42,12 +19,8 @@ class PrimitiveProperty implements TProperty {
       tPropertyType = TPropertyType.date;
     } else {
       tPropertyType = TPropertyType.values.firstWhere(
-        (e) {
-          return e.name == (json['type'].toString());
-        },
-        orElse: () {
-          return TPropertyType.string;
-        },
+        (e) => e.name == (json['type'].toString()),
+        orElse: () => TPropertyType.string,
       );
     }
     return PrimitiveProperty(
@@ -60,44 +33,26 @@ class PrimitiveProperty implements TProperty {
       nullable: json['nullable'] ?? false,
     );
   }
+
+  @override
+  String toString() {
+    return 'PrimitiveProperty(type: $type, format: $format, nullable: $nullable, defaultValue: $defaultValue, enumValues: $enumValues)';
+  }
 }
 
 /// Represents an array schema property.
-///
-/// Contains the `items` schema, optional `format`, `enum`, `default`, and nullability.
-class ArrayProperty implements TProperty {
-  @override
-  final TPropertyType type;
-
-  @override
-  final String? ref;
-
-  @override
-  final bool nullable;
-
-  @override
-  final String? format;
-
-  @override
-  final dynamic defaultValue;
-
-  @override
-  final List<String> enumValues;
-
-  @override
-  final TProperty? items;
-
+class ArrayProperty extends TProperty {
   ArrayProperty({
-    this.items,
-    this.ref,
-    required this.nullable,
-    this.type = TPropertyType.arrayProperty,
-    required this.format,
-    this.defaultValue,
-    required this.enumValues,
-  });
+    super.items,
+    super.ref,
+    required super.nullable,
+    super.format,
+    super.defaultValue,
+    required super.enumValues,
+  }) : super(
+          type: TPropertyType.arrayProperty,
+        );
 
-  /// Creates an [ArrayProperty] from a JSON Schema fragment.
   factory ArrayProperty.fromJson(Map<String, dynamic> json) {
     return ArrayProperty(
       items: json['items'] == null
@@ -111,42 +66,26 @@ class ArrayProperty implements TProperty {
           .toList(),
     );
   }
+
+  @override
+  String toString() {
+    return 'ArrayProperty(items: $items, nullable: $nullable, format: $format, defaultValue: $defaultValue, enumValues: $enumValues)';
+  }
 }
 
 /// Represents a `$ref` schema that points to another component schema.
-class RefProperty implements TProperty {
-  @override
-  final TPropertyType type;
-
-  @override
-  final String? ref;
-
-  @override
-  final bool nullable;
-
-  @override
-  final String? format;
-
-  @override
-  final dynamic defaultValue;
-
-  @override
-  final List<String> enumValues;
-
-  @override
-  final TProperty? items;
-
+class RefProperty extends TProperty {
   RefProperty({
-    this.ref,
-    this.type = TPropertyType.refProperty,
-    required this.nullable,
-    required this.format,
-    this.defaultValue,
-    required this.enumValues,
-    this.items,
-  });
+    super.ref,
+    super.format,
+    super.nullable = false,
+    super.defaultValue,
+    required super.enumValues,
+    super.items,
+  }) : super(
+          type: TPropertyType.refProperty,
+        );
 
-  /// Creates a [RefProperty] from a JSON Schema fragment containing `$ref`.
   factory RefProperty.fromJson(Map<String, dynamic> json) {
     return RefProperty(
       ref: (json['\$ref'] as String?)?.replaceAll("#/components/schemas/", ""),
@@ -158,65 +97,43 @@ class RefProperty implements TProperty {
           .toList(),
     );
   }
+
+  @override
+  String toString() {
+    return 'RefProperty(ref: $ref, nullable: $nullable, format: $format, defaultValue: $defaultValue, enumValues: $enumValues)';
+  }
 }
 
-/// Represents an object schema property with nested properties and optional `additionalProperties`.
-class ObjectProperty implements TProperty {
-  @override
-  final TPropertyType type;
-
-  @override
-  final String? ref;
-
-  @override
-  final bool nullable;
-
-  /// The list of named child properties and their schemas.
+/// Represents an object schema property with nested properties.
+class ObjectProperty extends TProperty {
   final List<PropertyNameAndSchema> properties;
-
-  /// Additional properties allowed in the object, can be a schema or `true`/`false`.
   final dynamic additionalProperties;
-
-  @override
-  final String? format;
-
-  @override
-  final dynamic defaultValue;
-
-  @override
-  final List<String> enumValues;
-
-  @override
-  final TProperty? items;
 
   ObjectProperty({
     required this.properties,
     this.additionalProperties,
-    this.ref,
-    required this.nullable,
-    this.type = TPropertyType.objectProperty,
-    required this.format,
-    this.defaultValue,
-    required this.enumValues,
-    this.items,
-  });
+    super.ref,
+    required super.nullable,
+    super.format,
+    super.defaultValue,
+    required super.enumValues,
+    super.items,
+  }) : super(
+          type: TPropertyType.objectProperty,
+        );
 
-  /// Creates an [ObjectProperty] from a JSON Schema fragment.
   factory ObjectProperty.fromJson(Map<String, dynamic> json) {
     List<PropertyNameAndSchema> properties = [];
-
     if (json['properties'] != null &&
         json['properties'] is Map<String, dynamic>) {
-      (json['properties'] as Map<String, dynamic>).forEach(
-        (key, value) {
-          properties.add(
-            PropertyNameAndSchema(
-              propertyName: key,
-              schema: TProperty.fromJson(value),
-            ),
-          );
-        },
-      );
+      (json['properties'] as Map<String, dynamic>).forEach((key, value) {
+        properties.add(
+          PropertyNameAndSchema(
+            propertyName: key,
+            schema: TProperty.fromJson(value),
+          ),
+        );
+      });
     }
 
     return ObjectProperty(
@@ -230,9 +147,14 @@ class ObjectProperty implements TProperty {
           .toList(),
     );
   }
+
+  @override
+  String toString() {
+    return 'ObjectProperty(properties: $properties, additionalProperties: $additionalProperties, nullable: $nullable, format: $format, defaultValue: $defaultValue, enumValues: $enumValues)';
+  }
 }
 
-/// Base type for any schema property, providing common fields used across variants.
+/// Base type for any schema property.
 class TProperty {
   final TPropertyType type;
   final String? ref;
@@ -252,8 +174,6 @@ class TProperty {
     required this.items,
   });
 
-  /// Factory that selects an appropriate [TProperty] implementation
-  /// based on the JSON Schema node content (`type` or `$ref`).
   factory TProperty.fromJson(Map<String, dynamic> json) {
     if (json['type'] == 'array') {
       return ArrayProperty.fromJson(json);
@@ -264,6 +184,11 @@ class TProperty {
     } else {
       return PrimitiveProperty.fromJson(json);
     }
+  }
+
+  @override
+  String toString() {
+    return 'TProperty(type: $type, ref: $ref, nullable: $nullable, format: $format, defaultValue: $defaultValue, enumValues: $enumValues, items: $items)';
   }
 }
 
@@ -276,6 +201,11 @@ class PropertyNameAndSchema {
     required this.propertyName,
     required this.schema,
   });
+
+  @override
+  String toString() {
+    return '$propertyName: $schema';
+  }
 }
 
 /// Enumeration of supported schema property kinds and primitive types.
@@ -291,53 +221,3 @@ enum TPropertyType {
   file,
   date,
 }
-
-/*Example:
-
-        "parameters": [
-          {
-            "name": "X-TimeZoneId",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": "America/New_York"
-          },
-          {
-            "name": "lang",
-            "in": "header",
-            "allowEmptyValue": true,
-            "schema": {
-              "enum": [
-                "ar",
-                "en",
-                "fr",
-                "de",
-                "ru",
-                "es",
-                "zh",
-                "ja",
-                "ko",
-                "hi",
-                "tr",
-                "fa",
-                "ku",
-                "nl"
-              ],
-              "type": "string"
-            },
-            "example": "en"
-          },
-          {
-            "name": "DebugMode",
-            "in": "header",
-            "allowEmptyValue": true,
-            "schema": {
-              "type": "boolean"
-            },
-            "example": true
-          }
-        ],
-
-*/

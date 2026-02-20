@@ -2,7 +2,7 @@ extension StringCasingExtension on String {
   /// Converts a PascalCase or camelCase string into camelCase
   String toCamelCase() {
     // 1. Normalize separators: convert "-" to "_"
-    String input = replaceAll('-', '_');
+    String input = replaceAll('-', '_').replaceAll("+", "_");
 
     // 2. Insert underscore only when uppercase follows lowercase or digit
     input = input.replaceAllMapped(
@@ -32,5 +32,11 @@ extension StringCasingExtension on String {
     return replaceAllMapped(RegExp(r'([a-z])([A-Z])'), (match) {
       return '${match.group(1)}_${match.group(2)?.toLowerCase()}';
     }).toLowerCase();
+  }
+
+  String toPascalCase() {
+    String camel = toCamelCase();
+    if (camel.isEmpty) return camel;
+    return camel[0].toUpperCase() + camel.substring(1);
   }
 }

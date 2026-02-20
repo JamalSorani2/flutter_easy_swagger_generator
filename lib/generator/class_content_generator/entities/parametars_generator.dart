@@ -24,6 +24,7 @@ class ParametarsGenerator {
         }
         String paramName = param.name;
         DartTypeInfo dartTypeInfo = getDartType(
+          parameterName: paramName,
           schema: param.schema,
           components: components,
           isForEntities: true,
