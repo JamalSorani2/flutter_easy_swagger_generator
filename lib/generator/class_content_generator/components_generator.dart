@@ -120,6 +120,7 @@ class ComponentsGenerator {
               isSubClass: ref != null,
               isDateTime: paramType.toLowerCase().contains("datetime"),
               isList: paramType.toLowerCase().contains("list<"),
+              isFile: paramType == "File" || paramType.contains("<File>"),
             )
           : ClassGeneratorHelper.formatFromJsonLine(
               paramName: paramName,

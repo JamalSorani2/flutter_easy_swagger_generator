@@ -1,10 +1,14 @@
 import 'dart:io';
 import 'package:flutter_easy_swagger_generator/helpers/imports.dart';
 
+import 'generator/presentation_generator/state/provider/provider_generator.dart';
+
+Set<String> multiPartClasses = {};
 Future<void> swaggerGenerator(
   String swaggerPath, {
   List<String>? prefixesToRemove,
 }) async {
+  multiPartClasses.clear();
   String mainPath = "lib/app";
 
   //********************* Check swagger file *******************************/
@@ -83,25 +87,17 @@ Future<void> swaggerGenerator(
   BlocGenerator? blocGenerator;
   EventGenerator? eventGenerator;
   StateGenerator? stateGenerator;
-
   blocGenerator =
       BlocGenerator(groupedRoutes: groupedRoutes, mainPath: mainPath);
   eventGenerator =
       EventGenerator(groupedRoutes: groupedRoutes, mainPath: mainPath);
   stateGenerator =
       StateGenerator(groupedRoutes: groupedRoutes, mainPath: mainPath);
-
-  //********************* Generate per category **********************/
-  for (var category in groupedRoutes.keys) {
-    repositoryGenerator.generateRepositoryForCategory(category);
-    remoteGenerator.generateRemoteForCategory(category);
-    repoImpGenerator.generateRepositoryForCategory(category);
-
-    blocGenerator.generateBlocForCategory(category);
-    eventGenerator.generateEventForCategory(category);
-    stateGenerator.generateStateForCategory(category);
-  }
-
+  ProviderGenerator providerGenerator = ProviderGenerator(
+      routesInfo: routesInfo,
+      components: components,
+      mainPath: mainPath,
+      globalEnumsFileString: globalEnumsFileString);
   //********************* Shared generators **********************/
   NetworkGenerator networkGenerator = NetworkGenerator(mainPath: mainPath);
   ResultBuilderGenerator resultBuilderGenerator =
@@ -118,11 +114,23 @@ Future<void> swaggerGenerator(
   await Future.wait([
     Future(() => routesGenerator.generateRoutes()),
     Future(() => entitiesGenerator.generateEntities()),
+    Future(() => providerGenerator.generateProvider()),
     Future(() => responseModelsGenerator.generateModels()),
     Future(() => networkGenerator.generateNetwork()),
     Future(() => resultBuilderGenerator.generateResultBuilder()),
     Future(() => injectionGenerator.generateInjection()),
   ]);
+
+  //********************* Generate per category **********************/
+  for (var category in groupedRoutes.keys) {
+    repositoryGenerator.generateRepositoryForCategory(category);
+    remoteGenerator.generateRemoteForCategory(category);
+    repoImpGenerator.generateRepositoryForCategory(category);
+
+    blocGenerator.generateBlocForCategory(category);
+    eventGenerator.generateEventForCategory(category);
+    stateGenerator.generateStateForCategory(category);
+  }
 
   printSuccess('Code generation completed!\n');
 }

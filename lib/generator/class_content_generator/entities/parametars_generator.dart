@@ -55,6 +55,7 @@ class ParametarsGenerator {
           isSubClass: param.schema?.ref != null,
           isDateTime: paramType.toLowerCase().contains("datetime"),
           isList: paramType.toLowerCase().contains("list<"),
+          isFile: paramType == "File" || paramType.contains("<File>"),
         );
         generateParametars.add(
           GeneratedParameters(

@@ -66,11 +66,9 @@ class FilePath {
   }
 
   String get providerFilePath {
-    final subPath = "presentation/state/provider";
-    final nameComplement = "provider";
-    return '$mainPath/$_category/$subPath/${_category}_$nameComplement.dart'
-        .toSnakeCase()
-        .toLowerCase();
+    return '$mainPath/$_category/${ImportPath(
+      actionName: routeName!,
+    ).providerFilePath}';
   }
 
   String get riverpodFilePath {

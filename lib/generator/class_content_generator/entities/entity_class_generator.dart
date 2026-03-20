@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter_easy_swagger_generator/generator/class_content_generator/components_generator.dart';
 import 'package:flutter_easy_swagger_generator/helpers/imports.dart';
 
+import '../../../flutter_easy_swagger_generator.dart';
+
 /// Generates Dart entity (parameter) classes for API endpoints.
 ///
 /// For each route, this generator builds a `*Param` class representing
@@ -68,6 +70,9 @@ class EntityClassGenerator {
     List<GeneratedParameters> generateParametars = [];
     final bool isMultiPart =
         requestBody?.content?.contentType == TContentType.multipartFormData;
+    if (isMultiPart) {
+      multiPartClasses.add(className);
+    }
     ParametarsGenerator.generatedSubClassesNames.clear();
     if (subClassParameters == null) {
       generateParametars = ParametarsGenerator.generateParametars(
@@ -164,7 +169,9 @@ ${parameter.enumValues.map((e) => "  $e,").join(line)}
     );
 
     final generatedToJsonString = classSerializerGenerator.generateToJson(
-        generatedJsonLines, isMultiPart);
+      generatedJsonLines,
+      isMultiPart,
+    );
     generatedImportsString =
         ClassGeneratorHelper.removeDuplicateImports(generatedImportsString);
     final genereatedSubClasses =

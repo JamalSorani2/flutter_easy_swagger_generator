@@ -13,6 +13,11 @@ class ImportPath {
     return "domain/entities/${actionName2}_param.dart";
   }
 
+  String get providerFilePath {
+    String actionName2 = actionName.toSnakeCase();
+    return "presentation/state/provider/${actionName2}_provider.dart";
+  }
+
   String get modelFilePath {
     String actionName2 = actionName.toSnakeCase();
 

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import '../../flutter_easy_swagger_generator.dart';
 import '../../helpers/imports.dart';
 
 /// A generator responsible for creating remote data source classes.
@@ -33,7 +34,7 @@ class RemoteGenerator {
     final buffer = StringBuffer();
 
     buffer.writeln("import 'package:dio/dio.dart';");
-    buffer.writeln("import '../../../url.dart';");
+    buffer.writeln("import '../../../../url.dart';");
     buffer.writeln(
         "import '../../../../../common/network/exception/error_handler.dart';");
 
@@ -88,6 +89,7 @@ class RemoteGenerator {
       if (inn == "query") {
         inn = "queryParameters";
       }
+      bool isMultiPart = multiPartClasses.contains("${actionName}Param");
       buffer.writeln("""
   Future<${actionName}Model> $methodName({
     required ${actionName}Param ${methodName}Param,
@@ -95,7 +97,7 @@ class RemoteGenerator {
     return throwDioException(() async {
       final response = await _dio.${requestType.name}(
         AppUrl.${actionName.toCamelCase()},
-        $inn: ${methodName}Param.toJson(),
+        $inn: ${isMultiPart ? "await " : ""}${methodName}Param.toJson(),
       );
       return ${actionName}Model.fromJson(response.data);
     });

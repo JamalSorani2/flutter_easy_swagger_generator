@@ -41,6 +41,30 @@ class ClassGeneratorHelper {
     return vairable;
   }
 
+  static String formatVariableName({
+    required String paramType,
+    required String paramName,
+    required bool isNullable,
+    required dynamic example,
+    required String? format,
+    required bool allowEmptyValue,
+  }) {
+    String nullAbleMark = isNullable && paramType != "dynamic" ? "?" : "";
+    String vairable =
+        '  final $paramType$nullAbleMark ${paramName.toCamelCase().replaceAll("/", "")};';
+    if (example != null) {
+      vairable = "$vairable /*Example: ${example.toString()}*/";
+    }
+    if (format != null) {
+      vairable = "$vairable //!Format: ${format.toString()}";
+    }
+    if (allowEmptyValue) {
+      vairable = "$vairable //! This field accept empty value";
+    }
+
+    return vairable;
+  }
+
   /// Formats a constructor parameter entry like `required this.foo` or `this.foo`.
   ///
   /// - [paramName]: Property/field name (will be camelCased).
@@ -66,18 +90,29 @@ class ClassGeneratorHelper {
     required bool isSubClass,
     required bool isDateTime,
     required bool isList,
+    required bool isFile,
   }) {
     String camelCaseName = paramName.replaceAll('.', '').toCamelCase();
     String nullableMark = nullable ? "?" : "";
     String enumName = isEnum ? "$nullableMark.name" : "";
     String subClassToJson =
         isSubClass && !isEnum && !isList ? "$nullableMark.toJson()" : "";
-    String dateToIso8601String =
-        isDateTime ? "$nullableMark.toIso8601String()" : "";
+    String dateToIso8601String = isDateTime
+        ? isList
+            ? "$nullableMark.map((e) => e.toIso8601String()).toList()"
+            : "$nullableMark.toIso8601String()"
+        : "";
     String listToJson = isList && isSubClass
         ? "$nullableMark.map((e) => e.toJson()).toList()"
         : "";
-    return '      \'$paramName\': $camelCaseName$enumName$subClassToJson$dateToIso8601String$listToJson,';
+    if (isFile) {
+      return """      '$paramName': await MultipartFile.fromFile(
+        $camelCaseName.path,
+        filename: $camelCaseName.path.split('/').last,
+      ),""";
+    } else {
+      return '      \'$paramName\': $camelCaseName$enumName$subClassToJson$dateToIso8601String$listToJson,';
+    }
   }
 
   /// Formats a single `fromJson` named argument line for a property.

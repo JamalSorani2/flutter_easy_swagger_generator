@@ -59,7 +59,7 @@ class ClassSerializerGenerator {
 
     buffer.writeln(
       '''
-  ${isMultiPart ? "FormData" : "Map<String, dynamic>"} toJson() {
+  ${isMultiPart ? "Future<FormData>" : "Map<String, dynamic>"} toJson() ${isMultiPart ? "async" : ""} {
     return ${isMultiPart ? "FormData.fromMap(" : ""}{''',
     );
 
