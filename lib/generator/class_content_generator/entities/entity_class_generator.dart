@@ -105,8 +105,19 @@ class EntityClassGenerator {
 
     String generatedImportsString = classSerializerGenerator.generateImports(
         generateParametars, isMultiPart);
+    Set<String> varianlesNames = {};
     String generatedVariablesString = "";
     for (var parameter in generateParametars) {
+      String variable = parameter.generatedVariable
+          .replaceAll("final", "")
+          .trim()
+          .replaceAll("?", "");
+      final parts = variable.trim().split(RegExp(r'\s+'));
+      final variableName = parts[1].replaceAll(';', '');
+      if (varianlesNames.contains(variableName)) {
+        continue;
+      }
+      varianlesNames.add(variableName);
       generatedConstructorVariable.add(parameter.generatedConstructorVariable);
       generatedJsonLines.add(parameter.generatedJsonLine);
       generatedVariablesString += (parameter.generatedVariable + line);

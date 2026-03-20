@@ -129,6 +129,8 @@ class ProviderClassGenerator {
 """;
     String initializerParametersString = "";
     String initializerBodyString = "";
+    Set<String> varianlesNames = {};
+
     for (var parameter in generateParametars) {
       String variable = parameter.generatedVariable
           .replaceAll("final", "")
@@ -137,7 +139,10 @@ class ProviderClassGenerator {
       final parts = variable.trim().split(RegExp(r'\s+'));
       final type = parts[0];
       final variableName = parts[1].replaceAll(';', '');
-
+      if (varianlesNames.contains(variableName)) {
+        continue;
+      }
+      varianlesNames.add(variableName);
       generatedVariablesString += ("  $type? _$variableName;$line");
 
       generatedGettersString +=
