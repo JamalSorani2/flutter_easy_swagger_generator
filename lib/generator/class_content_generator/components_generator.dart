@@ -12,6 +12,7 @@ class ComponentsGenerator {
 
   /// Flag indicating whether the generator is being used for entity classes.
   final bool isForEntities;
+  final Set<String> _activeRefs = <String>{};
 
   /// Creates a new [ComponentsGenerator] instance.
   ///
@@ -68,8 +69,14 @@ class ComponentsGenerator {
   List<GeneratedParameters> _generateRef({
     required String ref,
   }) {
+    if (_activeRefs.contains(ref)) {
+      return [];
+    }
+    _activeRefs.add(ref);
     final TProperty? tProperty = components.schemas[ref];
-    return _tPropertyGenerator(tProperty);
+    final result = _tPropertyGenerator(tProperty);
+    _activeRefs.remove(ref);
+    return result;
   }
 
   /// Generates parameters for an object property.
@@ -134,6 +141,13 @@ class ComponentsGenerator {
             );
       String fixedParamType =
           paramType.replaceAll("List<", "").replaceAll(">", "");
+      final canGenerateSubClass =
+          !ParametarsGenerator.generatedSubClassesNames
+              .contains(fixedParamType) &&
+          ref != null;
+      if (canGenerateSubClass) {
+        ParametarsGenerator.generatedSubClassesNames.add(fixedParamType);
+      }
       generatedParameters.add(
         GeneratedParameters(
           type: paramType,
@@ -148,9 +162,7 @@ class ComponentsGenerator {
               ? enumValues
               : [],
           subClassName: paramType,
-          subClassParameters: !ParametarsGenerator.generatedSubClassesNames
-                      .contains(fixedParamType) &&
-                  ref != null
+          subClassParameters: canGenerateSubClass
               ? (generateComponents(
                   content: MediaTypeContent(
                     contentType: TContentType.applicationJson,
@@ -160,7 +172,6 @@ class ComponentsGenerator {
               : null,
         ),
       );
-      ParametarsGenerator.generatedSubClassesNames.add(fixedParamType);
     }
     return generatedParameters;
   }

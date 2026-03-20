@@ -73,8 +73,8 @@ class EntityClassGenerator {
     if (isMultiPart) {
       multiPartClasses.add(className);
     }
-    ParametarsGenerator.generatedSubClassesNames.clear();
     if (subClassParameters == null) {
+      ParametarsGenerator.generatedSubClassesNames.clear();
       generateParametars = ParametarsGenerator.generateParametars(
         parameters: parameters,
         components: components,

@@ -86,8 +86,8 @@ class ModelClassGenerator {
     List<GeneratedParameters> generateParametars = [];
     final bool isMultiPart =
         content?.contentType == TContentType.multipartFormData;
-    ParametarsGenerator.generatedSubClassesNames.clear();
     if (subClassParameters == null) {
+      ParametarsGenerator.generatedSubClassesNames.clear();
       final componentsGenerator = ComponentsGenerator(
         components: components,
         isForEntities: false,

@@ -7,6 +7,7 @@ Set<String> multiPartClasses = {};
 Future<void> swaggerGenerator(
   String swaggerPath, {
   List<String>? prefixesToRemove,
+  String? category,
 }) async {
   multiPartClasses.clear();
   String mainPath = "lib/app";
@@ -28,6 +29,21 @@ Future<void> swaggerGenerator(
   OpenApiJSON openApiJSON = OpenApiJSON.fromJson(swaggerJson);
   Components components = openApiJSON.components;
   List<RouteInfo> routesInfo = openApiJSON.paths;
+  final normalizedCategory = category?.trim().toLowerCase();
+  if (normalizedCategory != null && normalizedCategory.isNotEmpty) {
+    routesInfo = routesInfo
+        .where(
+          (routeInfo) =>
+              getCategory(routeInfo.fullRoute).toLowerCase() ==
+              normalizedCategory,
+        )
+        .toList();
+
+    if (routesInfo.isEmpty) {
+      printWarning("No routes found for category '$category'.");
+      return;
+    }
+  }
 
   //********************* Group routes by category *******************************/
   Map<String, List<RouteInfo>> groupedRoutes = {};
@@ -110,7 +126,10 @@ Future<void> swaggerGenerator(
   );
 
   //********************* Generate shared code **********************/
-  printInfo('\nGenerating code from swagger file: $swaggerPath');
+  final generationTarget = normalizedCategory == null || normalizedCategory.isEmpty
+      ? swaggerPath
+      : "$swaggerPath (category: $normalizedCategory)";
+  printInfo('\nGenerating code from swagger file: $generationTarget');
   await Future.wait([
     Future(() => routesGenerator.generateRoutes()),
     Future(() => entitiesGenerator.generateEntities()),
