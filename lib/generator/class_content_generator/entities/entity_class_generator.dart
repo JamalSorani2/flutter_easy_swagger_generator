@@ -17,15 +17,11 @@ class EntityClassGenerator {
   /// The full text of the global enums file, used to detect already-declared enums.
   final String globalEnumsFileString;
 
-  /// Whether to generate MVVM files.
-  final bool isMVVM;
-
   /// Creates an [EntityClassGenerator] with required context.
   EntityClassGenerator({
     required this.components,
     required this.mainPath,
     required this.globalEnumsFileString,
-    required this.isMVVM,
   });
 
   /// Generates the `*Param` class for the given [routeInfo] and writes it to disk.
@@ -39,7 +35,6 @@ class EntityClassGenerator {
       mainPath: mainPath,
       category: moduleName,
       routeName: routeName,
-      isMVVM: isMVVM,
     ).entityFilePath;
     List<String> contents = [];
 

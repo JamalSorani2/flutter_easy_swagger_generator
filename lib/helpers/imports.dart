@@ -1,7 +1,7 @@
 export 'dart:convert';
-export 'package:flutter_easy_swagger_generator/generator/presentation_generator/bloc/bloc_generator.dart';
-export 'package:flutter_easy_swagger_generator/generator/presentation_generator/bloc/event_generator.dart';
-export 'package:flutter_easy_swagger_generator/generator/presentation_generator/bloc/state_generator.dart';
+export 'package:flutter_easy_swagger_generator/generator/presentation_generator/state/bloc/bloc_generator.dart';
+export 'package:flutter_easy_swagger_generator/generator/presentation_generator/state/bloc/event_generator.dart';
+export 'package:flutter_easy_swagger_generator/generator/presentation_generator/state/bloc/state_generator.dart';
 export 'package:flutter_easy_swagger_generator/generator/result_builder_generator/result_builder_generator.dart';
 export 'package:flutter_easy_swagger_generator/helpers/constants.dart';
 export 'package:flutter_easy_swagger_generator/generator/application_generator/application_generator.dart';
@@ -34,7 +34,5 @@ export 'package:flutter_easy_swagger_generator/generator/class_content_generator
 export 'package:flutter_easy_swagger_generator/generator/class_content_generator/entities/parametars_generator.dart';
 export 'package:flutter_easy_swagger_generator/classes/media_type.dart';
 export 'package:flutter_easy_swagger_generator/generator/enums_generator.dart';
-export 'package:flutter_easy_swagger_generator/generator/presentation_generator/provider/provider_generator.dart';
-export 'package:flutter_easy_swagger_generator/generator/presentation_generator/riverpod/riverpod_generator.dart';
 export 'package:flutter_easy_swagger_generator/helpers/file_path.dart';
 export 'package:flutter_easy_swagger_generator/helpers/import_path.dart';

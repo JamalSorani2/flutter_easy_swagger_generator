@@ -14,13 +14,10 @@ class RepoImpGenerator {
 
   final String mainPath;
 
-  final bool isMVVM;
-
   /// Creates a [RepoImpGenerator] instance with the required inputs.
   RepoImpGenerator({
     required this.groupedRoutes,
     required this.mainPath,
-    required this.isMVVM,
   });
 
   /// Generates the repository implementation for a specific [_category].
@@ -37,7 +34,6 @@ class RepoImpGenerator {
     String filePath = FilePath(
       mainPath: mainPath,
       category: snakeCaseCategory,
-      isMVVM: isMVVM,
     ).repoImpFilePath;
 
     final file = File(filePath);
@@ -49,15 +45,11 @@ class RepoImpGenerator {
     buffer.writeln(
         "import 'package:internet_connection_checker/internet_connection_checker.dart';");
     buffer.writeln("import '../../../../common/network/failure.dart';");
-    if (isMVVM) {
-      buffer.writeln("import '${snakeCaseCategory}_repository.dart';");
-      buffer.writeln("import '../remote/${snakeCaseCategory}_remote.dart';");
-    } else {
-      buffer.writeln(
-          "import '../../domain/repository/${snakeCaseCategory}_repository.dart';");
-      buffer.writeln(
-          "import '../datasource/remote/${snakeCaseCategory}_remote.dart';");
-    }
+
+    buffer.writeln(
+        "import '../../domain/repository/${snakeCaseCategory}_repository.dart';");
+    buffer.writeln(
+        "import '../datasource/remote/${snakeCaseCategory}_remote.dart';");
     buffer.writeln(
         "import '../../../../common/network/exception/error_handler.dart';");
 
@@ -66,7 +58,6 @@ class RepoImpGenerator {
       String routeName = getRouteName(path.fullRoute);
       String actionName = routeName.toSnakeCase();
       final importPath = ImportPath(
-        isMVVM: isMVVM,
         actionName: actionName,
       );
       final dots = "../../";
@@ -78,7 +69,6 @@ class RepoImpGenerator {
       String routeName = getRouteName(path.fullRoute);
       String actionName = routeName.toSnakeCase();
       final importPath = ImportPath(
-        isMVVM: isMVVM,
         actionName: actionName,
       );
       final dots = "../../";

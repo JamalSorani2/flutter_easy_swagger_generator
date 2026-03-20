@@ -21,7 +21,6 @@ class StateGenerator {
     String filePath = FilePath(
       mainPath: mainPath,
       category: category,
-      isMVVM: false,
     ).stateFilePath;
     final file = File(filePath);
     file.parent.createSync(recursive: true); // Ensure folder exists

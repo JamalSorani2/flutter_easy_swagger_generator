@@ -38,7 +38,6 @@ class BlocGenerator {
     String filePath = FilePath(
       mainPath: mainPath,
       category: category,
-      isMVVM: false,
     ).blocFilePath.toLowerCase();
 
     final file = File(filePath);

@@ -11,14 +11,11 @@ class ModelsGenerator {
 
   final String globalEnumsFileString;
 
-  final bool isMVVM;
-
   ModelsGenerator({
     required this.routesInfo,
     required this.components,
     required this.mainPath,
     required this.globalEnumsFileString,
-    required this.isMVVM,
   });
 
   void generateModels() {
@@ -26,7 +23,6 @@ class ModelsGenerator {
       components: components,
       mainPath: mainPath,
       globalEnumsFileString: globalEnumsFileString,
-      isMVVM: isMVVM,
     );
     for (var routeInfo in routesInfo) {
       classGenerator.generateClass(routeInfo);

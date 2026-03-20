@@ -9,14 +9,11 @@ class EntitiesGenerator {
 
   final String globalEnumsFileString;
 
-  final bool isMVVM;
-
   EntitiesGenerator({
     required this.routesInfo,
     required this.components,
     required this.globalEnumsFileString,
     required this.mainPath,
-    required this.isMVVM,
   });
 
   /// Generates entity classes for all paths.
@@ -28,7 +25,6 @@ class EntitiesGenerator {
       components: components,
       mainPath: mainPath,
       globalEnumsFileString: globalEnumsFileString,
-      isMVVM: isMVVM,
     );
     for (var routeInfo in routesInfo) {
       classGenerator.generateClass(routeInfo);

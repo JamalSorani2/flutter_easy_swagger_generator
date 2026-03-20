@@ -32,7 +32,6 @@ class ApplicationGenerator {
     String filePath = FilePath(
       mainPath: mainPath,
       category: category,
-      isMVVM: false,
     ).applicationFilePath;
     final file = File(filePath);
     file.parent.createSync(recursive: true);

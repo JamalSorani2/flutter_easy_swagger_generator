@@ -8,13 +8,10 @@ class RepositoryGenerator {
   /// Main path where generated files should be saved.
   final String mainPath;
 
-  final bool isMVVM;
-
   /// Constructor for [RepositoryGenerator].
   RepositoryGenerator({
     required this.groupedRoutes,
     required this.mainPath,
-    required this.isMVVM,
   });
 
   /// Generates the repository abstract class for a specific category.
@@ -31,7 +28,6 @@ class RepositoryGenerator {
     String filePath = FilePath(
       mainPath: mainPath,
       category: category,
-      isMVVM: isMVVM,
     ).repositoryFilePath;
 
     final file = File(filePath);
@@ -46,7 +42,6 @@ class RepositoryGenerator {
       String routeName = getRouteName(path.fullRoute);
       String actionName = routeName.toSnakeCase();
       final importPath = ImportPath(
-        isMVVM: isMVVM,
         actionName: actionName,
       );
       buffer.writeln("import '../../${importPath.modelFilePath}';");
@@ -57,7 +52,6 @@ class RepositoryGenerator {
       String routeName = getRouteName(path.fullRoute);
       String actionName = routeName.toSnakeCase();
       final importPath = ImportPath(
-        isMVVM: isMVVM,
         actionName: actionName,
       );
       buffer.writeln("import '../../${importPath.entityFilePath}';");

@@ -20,8 +20,6 @@ class ModelClassGenerator {
   /// regenerating enums that already exist globally.
   final String globalEnumsFileString;
 
-  final bool isMVVM;
-
   /// Creates a new [ModelClassGenerator].
   ///
   /// - [components]: OpenAPI components for schema lookup.
@@ -32,7 +30,6 @@ class ModelClassGenerator {
     required this.components,
     required this.mainPath,
     required this.globalEnumsFileString,
-    required this.isMVVM,
   });
 
   /// Generates a model class file for the given [routeInfo].
@@ -59,7 +56,6 @@ class ModelClassGenerator {
       mainPath: mainPath,
       category: moduleName,
       routeName: routeName,
-      isMVVM: isMVVM,
     ).modelFilePath;
 
     final file = File(filePath);

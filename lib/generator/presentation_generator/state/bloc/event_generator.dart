@@ -21,7 +21,6 @@ class EventGenerator {
     String filePath = FilePath(
       mainPath: mainPath,
       category: category,
-      isMVVM: false,
     ).eventFilePath;
     final file = File(filePath);
     file.parent.createSync(recursive: true); // Ensure folder exists

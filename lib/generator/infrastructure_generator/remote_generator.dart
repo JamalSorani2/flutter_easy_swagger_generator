@@ -13,13 +13,10 @@ class RemoteGenerator {
 
   final String mainPath;
 
-  final bool isMVVM;
-
   /// Creates a [RemoteGenerator] instance with the required inputs.
   RemoteGenerator({
     required this.groupedRoutes,
     required this.mainPath,
-    required this.isMVVM,
   });
 
   void generateRemoteForCategory(
@@ -29,7 +26,6 @@ class RemoteGenerator {
     String filePath = FilePath(
       mainPath: mainPath,
       category: category,
-      isMVVM: isMVVM,
     ).remoteFilePath;
 
     final file = File(filePath);
@@ -37,7 +33,7 @@ class RemoteGenerator {
     final buffer = StringBuffer();
 
     buffer.writeln("import 'package:dio/dio.dart';");
-    buffer.writeln("import '${isMVVM ? '' : '../'}../../../url.dart';");
+    buffer.writeln("import '../../../url.dart';");
     buffer.writeln(
         "import '../../../../../common/network/exception/error_handler.dart';");
 
@@ -52,10 +48,9 @@ class RemoteGenerator {
       String routeName = getRouteName(path.fullRoute);
       String actionName = routeName.toSnakeCase();
       final importPath = ImportPath(
-        isMVVM: isMVVM,
         actionName: actionName,
       );
-      final dots = isMVVM ? "../../" : "../../../";
+      final dots = "../../../";
       buffer.writeln("import '$dots${importPath.entityFilePath}';");
     }
 

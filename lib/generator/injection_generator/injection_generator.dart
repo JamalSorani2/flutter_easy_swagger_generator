@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter_easy_swagger_generator/flutter_easy_swagger_generator.dart';
 import '../../helpers/imports.dart';
 
 /// A generator responsible for creating dependency injection setup files.
@@ -18,17 +17,10 @@ class InjectionGenerator {
   /// The base path where generated files will be stored.
   final String mainPath;
 
-  /// The state management type.
-  final StateManagementType stateManagementType;
-
-  final bool isMVVM;
-
   /// Creates a new [InjectionGenerator].
   InjectionGenerator({
     required this.mainPath,
     required this.moduleList,
-    required this.stateManagementType,
-    required this.isMVVM,
   });
 
   /// Generates dependency injection setup files.
@@ -37,15 +29,10 @@ class InjectionGenerator {
   /// 1. Creates an injection file for each module in [moduleList].
   /// 2. Creates a main `injection.dart` file to initialize all modules.
   void generateInjection() {
-    try {
-      for (var module in moduleList) {
-        _generateInjectionForEachCategory(module);
-      }
-      _generateMainInjection();
-    } catch (e, s) {
-      printError('Error while generating injection: $e');
-      printError(s.toString());
+    for (var module in moduleList) {
+      _generateInjectionForEachCategory(module);
     }
+    _generateMainInjection();
   }
 
   /// Generates an injection file for a specific [category].
@@ -71,33 +58,15 @@ class InjectionGenerator {
     // Generate DI setup code for this category
     buffer.writeln("""
 import 'package:dio/dio.dart';
-${isMVVM ? "import '../../../app/$snakeCaseCategory/data/repositories/${snakeCaseCategory}_repository.dart';" : "import '../../../app/$snakeCaseCategory/domain/repository/${snakeCaseCategory}_repository.dart';"}
-${isMVVM ? "import '../../../app/$snakeCaseCategory/data/remote/${snakeCaseCategory}_remote.dart';" : "import '../../../app/$snakeCaseCategory/infrastructure/datasource/remote/${snakeCaseCategory}_remote.dart';"}
-${isMVVM ? "import '../../../app/$snakeCaseCategory/data/repositories/${snakeCaseCategory}_repo_imp.dart';" : "import '../../../app/$snakeCaseCategory/infrastructure/repo_imp/${snakeCaseCategory}_repo_imp.dart';"}
+import '../../../app/$snakeCaseCategory/domain/repository/${snakeCaseCategory}_repository.dart';
+import '../../../app/$snakeCaseCategory/infrastructure/datasource/remote/${snakeCaseCategory}_remote.dart';
+import '../../../app/$snakeCaseCategory/infrastructure/repo_imp/${snakeCaseCategory}_repo_imp.dart';
 import '../injection.dart';
 """);
 
     // Conditionally import state management files
-    if (stateManagementType == StateManagementType.bloc ||
-        stateManagementType == StateManagementType.all) {
-      buffer.writeln(
-          "import '../../../../app/$snakeCaseCategory/presentation/state/bloc/${snakeCaseCategory}_bloc.dart';");
-    }
-    if (stateManagementType == StateManagementType.provider ||
-        stateManagementType == StateManagementType.all) {
-      if (isMVVM) {
-        buffer.writeln(
-            "import '../../../app/$snakeCaseCategory/viewmodels/${snakeCaseCategory}_view_model.dart';");
-      } else {
-        buffer.writeln(
-            "import '../../../../app/$snakeCaseCategory/presentation/state/provider/${snakeCaseCategory}_provider.dart';");
-      }
-    }
-    if (stateManagementType == StateManagementType.riverpod ||
-        stateManagementType == StateManagementType.all) {
-      buffer.writeln(
-          "import '../../../../app/$snakeCaseCategory/presentation/state/riverpod/${snakeCaseCategory}_riverpod.dart';");
-    }
+    buffer.writeln(
+        "import '../../../../app/$snakeCaseCategory/presentation/state/bloc/${snakeCaseCategory}_bloc.dart';");
 
     buffer.writeln("""
 /// Registers all dependencies for the [$category] module.
@@ -117,41 +86,13 @@ Future<void> ${category.toCamelCase()}Injection() async {
 """);
 
     // Register selected state management
-    if (stateManagementType == StateManagementType.bloc ||
-        stateManagementType == StateManagementType.all) {
-      buffer.writeln("""
+    buffer.writeln("""
   getIt.registerSingleton<${capitalizedCategory}Bloc>(
     ${capitalizedCategory}Bloc(
       repository: getIt<${capitalizedCategory}Repository>(),
     ),
   );
 """);
-    }
-
-    if (stateManagementType == StateManagementType.provider ||
-        stateManagementType == StateManagementType.all) {
-      final providerClassName = isMVVM
-          ? "${capitalizedCategory}ViewModel"
-          : "${capitalizedCategory}Provider";
-      buffer.writeln("""
-  getIt.registerSingleton<$providerClassName>(
-    $providerClassName(
-      repository: getIt<${capitalizedCategory}Repository>(),
-    ),
-  );
-""");
-    }
-
-    if (stateManagementType == StateManagementType.riverpod ||
-        stateManagementType == StateManagementType.all) {
-      buffer.writeln("""
-  getIt.registerSingleton<${capitalizedCategory}Notifier>(
-    ${capitalizedCategory}Notifier(
-      repository: getIt<${capitalizedCategory}Repository>(),
-    ),
-  );
-""");
-    }
 
     buffer.writeln("}");
 
