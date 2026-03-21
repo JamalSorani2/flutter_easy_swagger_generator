@@ -22,7 +22,11 @@ DartTypeInfo getDartType({
   required String parameterName,
 }) {
   if (schema == null) {
-    return DartTypeInfo(className: 'dynamic', schema: null);
+    return DartTypeInfo(
+      className: 'dynamic',
+      schema: null,
+      fieldType: FieldType.textField,
+    );
   }
 
   String endPoint = isForEntities ? 'Param' : 'Model';
@@ -43,6 +47,7 @@ DartTypeInfo getDartType({
       schema: schema.items,
       isSubclass: true,
       isEnum: itemType.isEnum,
+      fieldType: itemType.fieldType,
     );
   }
 
@@ -56,6 +61,7 @@ DartTypeInfo getDartType({
       className: refParts.last.toCamelCase().toPascalCase() + endPoint,
       schema: schema,
       isSubclass: true,
+      fieldType: FieldType.textField,
     );
   }
 
@@ -84,23 +90,33 @@ DartTypeInfo _type(
       className: "${enumName.toPascalCase()}GlobalEnum",
       schema: schema,
       isEnum: true,
+      fieldType: FieldType.textField,
     );
   }
   switch (type) {
     case 'string':
-      return DartTypeInfo(className: 'String', schema: schema);
+      return DartTypeInfo(
+          className: 'String', schema: schema, fieldType: FieldType.textField);
     case 'integer':
-      return DartTypeInfo(className: 'int', schema: schema);
+      return DartTypeInfo(
+          className: 'int', schema: schema, fieldType: FieldType.textField);
     case 'number':
-      return DartTypeInfo(className: 'num', schema: schema);
+      return DartTypeInfo(
+          className: 'num', schema: schema, fieldType: FieldType.textField);
     case 'boolean':
-      return DartTypeInfo(className: 'bool', schema: schema);
+      return DartTypeInfo(
+          className: 'bool', schema: schema, fieldType: FieldType.switchType);
     case 'file':
-      return DartTypeInfo(className: 'File', schema: schema);
+      return DartTypeInfo(
+          className: 'File', schema: schema, fieldType: FieldType.file);
     case 'date':
-      return DartTypeInfo(className: 'DateTime', schema: schema);
+      return DartTypeInfo(
+          className: 'DateTime',
+          schema: schema,
+          fieldType: FieldType.textField);
     default:
-      return DartTypeInfo(className: 'dynamic', schema: schema);
+      return DartTypeInfo(
+          className: 'dynamic', schema: schema, fieldType: FieldType.textField);
   }
 }
 
@@ -114,11 +130,19 @@ class DartTypeInfo {
   final TProperty? schema;
   final bool isSubclass;
   final bool isEnum;
+  final FieldType fieldType;
 
   DartTypeInfo({
     required this.className,
     required this.schema,
     this.isSubclass = false,
     this.isEnum = false,
+    required this.fieldType,
   });
+}
+
+enum FieldType {
+  textField,
+  switchType,
+  file,
 }

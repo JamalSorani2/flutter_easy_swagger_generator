@@ -1,15 +1,18 @@
 import 'dart:io';
 import 'package:flutter_easy_swagger_generator/helpers/imports.dart';
 
+import 'generator/presentation_generator/state/provider/input_keys_generator.dart';
 import 'generator/presentation_generator/state/provider/provider_generator.dart';
 
 Set<String> multiPartClasses = {};
+Set<String> inputKeys = {};
 Future<void> swaggerGenerator(
   String swaggerPath, {
   List<String>? prefixesToRemove,
   String? category,
 }) async {
   multiPartClasses.clear();
+  inputKeys.clear();
   String mainPath = "lib/app";
 
   //********************* Check swagger file *******************************/
@@ -55,6 +58,10 @@ Future<void> swaggerGenerator(
   //********************* Generators Objects **********************/
   RoutesGenerator routesGenerator = RoutesGenerator(
     groupedRoutes: groupedRoutes,
+    mainPath: mainPath,
+  );
+
+  InputKeysGenerator inputKeysGenerator = InputKeysGenerator(
     mainPath: mainPath,
   );
 
@@ -110,10 +117,11 @@ Future<void> swaggerGenerator(
   stateGenerator =
       StateGenerator(groupedRoutes: groupedRoutes, mainPath: mainPath);
   ProviderGenerator providerGenerator = ProviderGenerator(
-      routesInfo: routesInfo,
-      components: components,
-      mainPath: mainPath,
-      globalEnumsFileString: globalEnumsFileString);
+    routesInfo: routesInfo,
+    components: components,
+    mainPath: mainPath,
+    globalEnumsFileString: globalEnumsFileString,
+  );
   //********************* Shared generators **********************/
   NetworkGenerator networkGenerator = NetworkGenerator(mainPath: mainPath);
   ResultBuilderGenerator resultBuilderGenerator =
@@ -126,14 +134,16 @@ Future<void> swaggerGenerator(
   );
 
   //********************* Generate shared code **********************/
-  final generationTarget = normalizedCategory == null || normalizedCategory.isEmpty
-      ? swaggerPath
-      : "$swaggerPath (category: $normalizedCategory)";
+  final generationTarget =
+      normalizedCategory == null || normalizedCategory.isEmpty
+          ? swaggerPath
+          : "$swaggerPath (category: $normalizedCategory)";
   printInfo('\nGenerating code from swagger file: $generationTarget');
   await Future.wait([
     Future(() => routesGenerator.generateRoutes()),
     Future(() => entitiesGenerator.generateEntities()),
     Future(() => providerGenerator.generateProvider()),
+    Future(() => inputKeysGenerator.generateInputKeys()),
     Future(() => responseModelsGenerator.generateModels()),
     Future(() => networkGenerator.generateNetwork()),
     Future(() => resultBuilderGenerator.generateResultBuilder()),

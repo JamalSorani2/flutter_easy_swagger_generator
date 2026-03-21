@@ -141,8 +141,7 @@ class ComponentsGenerator {
             );
       String fixedParamType =
           paramType.replaceAll("List<", "").replaceAll(">", "");
-      final canGenerateSubClass =
-          !ParametarsGenerator.generatedSubClassesNames
+      final canGenerateSubClass = !ParametarsGenerator.generatedSubClassesNames
               .contains(fixedParamType) &&
           ref != null;
       if (canGenerateSubClass) {
@@ -170,6 +169,7 @@ class ComponentsGenerator {
                   ),
                 ))
               : null,
+          fieldType: dartTypeInfo.fieldType,
         ),
       );
     }

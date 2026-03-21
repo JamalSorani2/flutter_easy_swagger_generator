@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter_easy_swagger_generator/generator/class_content_generator/components_generator.dart';
 import 'package:flutter_easy_swagger_generator/helpers/imports.dart';
 
+import '../../../../flutter_easy_swagger_generator.dart';
+
 class ProviderGenerator {
   final List<RouteInfo> routesInfo;
 
@@ -117,6 +119,11 @@ class ProviderClassGenerator {
       generateParametars,
       isMultiPart,
     );
+    bool withFormGroup = false;
+    String generatedFormGroupsString =
+        """//! Form Groups=====================================================
+  final form = FormGroup({
+""";
     String generatedVariablesString =
         "//! Variables=====================================================$line";
     String generatedGettersString =
@@ -143,22 +150,33 @@ class ProviderClassGenerator {
         continue;
       }
       varianlesNames.add(variableName);
-      generatedVariablesString += ("  $type? _$variableName;$line");
+      if (parameter.fieldType == FieldType.textField) {
+        generatedFormGroupsString +=
+            "    InputKeys.$variableName: FormControl<$type>(),$line";
+        inputKeys.add(variableName);
+        withFormGroup = true;
+      } else {
+        generatedVariablesString += ("  $type? _$variableName;$line");
 
-      generatedGettersString +=
-          "  $type? get $variableName => _$variableName;$line";
+        generatedGettersString +=
+            "  $type? get $variableName => _$variableName;$line";
 
-      generatedSettersString += """  void ${variableName}Setter($type? value) { 
+        generatedSettersString +=
+            """  void ${variableName}Setter($type? value) { 
     _$variableName = value;
     notifyListeners();
   }$line$line""";
 
-      generatedClearAllString += "    _$variableName = null;$line";
-
+        generatedClearAllString += "    _$variableName = null;$line";
+      }
       initializerParametersString += " required $type? $variableName,";
 
-      initializerBodyString += "    _$variableName = $variableName;$line";
-
+      if (parameter.fieldType == FieldType.textField) {
+        initializerBodyString +=
+            "    form.control(InputKeys.$variableName).value = $variableName;$line";
+      } else {
+        initializerBodyString += "    _$variableName = $variableName;$line";
+      }
       // String enumClassString = '';
       if (parameter.enumValues.isNotEmpty) {
         if (globalEnumsFileString.contains(parameter.subClassName)) {
@@ -194,22 +212,30 @@ class ProviderClassGenerator {
         ClassGeneratorHelper.removeDuplicateImports(generatedImportsString);
     // final genereatedSubClasses =
     //     classSerializerGenerator.generateSubClasses(generatedSubClasses);
-    generatedClearAllString += """    notifyListeners();
+    generatedClearAllString +=
+        """${withFormGroup ? "    form.reset();$line" : ""}    notifyListeners();
   }$line""";
+    generatedFormGroupsString += "  });$line";
     if (initializerParametersString.isNotEmpty) {
       initializerParametersString = "{$initializerParametersString}";
     }
     String generatedInitializerString =
         """//! Initializer=====================================================
   void initialize($initializerParametersString) {
-$initializerBodyString  notifyListeners();
+$initializerBodyString    notifyListeners();
   }$line""";
+    if (withFormGroup) {
+      generatedImportsString +=
+          "import 'package:reactive_forms/reactive_forms.dart';$line";
+      generatedImportsString += "import '../../../../input_keys.dart';$line";
+    }
     generatedImportsString = generatedImportsString.replaceAll(
       "import 'package:dio/dio.dart';",
       "",
     );
     String result = """$generatedImportsString
 class $className extends ChangeNotifier {
+${withFormGroup ? generatedFormGroupsString : ""}
 $generatedVariablesString
 $generatedGettersString
 $generatedSettersString$generatedInitializerString

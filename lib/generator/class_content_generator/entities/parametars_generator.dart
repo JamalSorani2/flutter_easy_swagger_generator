@@ -81,6 +81,7 @@ class ParametarsGenerator {
                     ),
                   ))
                 : null,
+            fieldType: dartTypeInfo.fieldType,
           ),
         );
         generatedSubClassesNames.add(paramType);
@@ -113,6 +114,8 @@ class GeneratedParameters {
   /// Nested parameters for referenced schemas; null when not applicable.
   final List<GeneratedParameters>? subClassParameters;
 
+  final FieldType fieldType;
+
   GeneratedParameters({
     required this.type,
     required this.generatedVariable,
@@ -121,6 +124,7 @@ class GeneratedParameters {
     required this.enumValues,
     required this.subClassName,
     required this.subClassParameters,
+    required this.fieldType,
   });
 }
 
