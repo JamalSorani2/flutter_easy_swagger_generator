@@ -80,6 +80,10 @@ class RemoteGenerator {
         List<String> allIn =
             (path.httpMethodInfo.parameters?.map((e) => e.inn).toList() ?? []);
         for (var element in allIn) {
+          if (element == "path") {
+            inn = "queryParameters";
+            break;
+          }
           if (element != "header") {
             inn = element;
             break;

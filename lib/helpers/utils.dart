@@ -69,6 +69,7 @@ String getRouteName(String path) {
 /// Converts a string to PascalCase.
 String _toPascalCase(String input) {
   if (input.isEmpty) return input;
+  input = input.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
   return input[0].toUpperCase() + input.substring(1);
 }
 
@@ -108,7 +109,6 @@ String getCategory(String path) {
       break;
     }
   }
-
   return parts.isNotEmpty ? parts.first : ConstantsHelper.generalCategory;
 }
 
