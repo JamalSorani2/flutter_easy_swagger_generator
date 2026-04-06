@@ -52,7 +52,7 @@ import '../../../domain/repository/${category.toSnakeCase()}_repository.dart';""
 
     // Add model imports for each route
     for (var path in categoryPaths) {
-      String routeName = getRouteName(path.fullRoute);
+      String routeName = getRouteName(path.fullRoute, path.httpMethod.name);
       String actionName = routeName.toSnakeCase();
 
       buffer.writeln(
@@ -61,7 +61,7 @@ import '../../../domain/repository/${category.toSnakeCase()}_repository.dart';""
 
     // Add entity imports for each route
     for (var path in categoryPaths) {
-      String routeName = getRouteName(path.fullRoute);
+      String routeName = getRouteName(path.fullRoute, path.httpMethod.name);
       String actionName = routeName.toSnakeCase();
       buffer.writeln(
           "import '../../../domain/entities/${actionName}_param.dart';");
@@ -90,7 +90,7 @@ class ${capitalizedCategory}Bloc extends Bloc<${capitalizedCategory}Event, ${cap
 
     // Register event handlers
     for (var path in categoryPaths) {
-      String routeName = getRouteName(path.fullRoute);
+      String routeName = getRouteName(path.fullRoute, path.httpMethod.name);
       String actionName = routeName;
       String actionEventName = actionName;
       if (actionEventName == capitalizedCategory) {
@@ -107,7 +107,7 @@ class ${capitalizedCategory}Bloc extends Bloc<${capitalizedCategory}Event, ${cap
 
     // Define event handler functions
     for (var path in categoryPaths) {
-      String routeName = getRouteName(path.fullRoute);
+      String routeName = getRouteName(path.fullRoute, path.httpMethod.name);
       String actionName = routeName;
       String actionEventName = actionName;
       if (actionEventName == capitalizedCategory) {

@@ -39,8 +39,8 @@ class StateGenerator {
 
     // Generate Result<T> fields for each route
     for (var path in groupedRoutes[category]!) {
-      String routeName =
-          getRouteName(path.fullRoute); // Convert path to action name
+      String routeName = getRouteName(
+          path.fullRoute, path.httpMethod.name); // Convert path to action name
       String actionName = routeName;
 
       String methodName = actionName[0].toLowerCase() + actionName.substring(1);

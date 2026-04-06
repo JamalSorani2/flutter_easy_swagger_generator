@@ -39,7 +39,7 @@ class RepositoryGenerator {
 
     // Import models for API responses
     for (var path in categoryPaths) {
-      String routeName = getRouteName(path.fullRoute);
+      String routeName = getRouteName(path.fullRoute, path.httpMethod.name);
       String actionName = routeName.toSnakeCase();
       final importPath = ImportPath(
         actionName: actionName,
@@ -49,7 +49,7 @@ class RepositoryGenerator {
 
     // Import entity classes for request parameters
     for (var path in categoryPaths) {
-      String routeName = getRouteName(path.fullRoute);
+      String routeName = getRouteName(path.fullRoute, path.httpMethod.name);
       String actionName = routeName.toSnakeCase();
       final importPath = ImportPath(
         actionName: actionName,
@@ -65,7 +65,7 @@ class RepositoryGenerator {
 
     // Generate repository methods for each API endpoint
     for (var path in categoryPaths) {
-      String routeName = getRouteName(path.fullRoute);
+      String routeName = getRouteName(path.fullRoute, path.httpMethod.name);
       String actionName = routeName;
 
       String methodName = actionName[0].toLowerCase() + actionName.substring(1);

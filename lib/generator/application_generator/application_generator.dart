@@ -44,14 +44,16 @@ class ApplicationGenerator {
         .writeln("import '../domain/repository/${category}_repository.dart';");
 
     for (var pathEntry in categoryPaths) {
-      String routeName = getRouteName(pathEntry.fullRoute);
+      String routeName =
+          getRouteName(pathEntry.fullRoute, pathEntry.httpMethod.name);
       String actionName = routeName.toSnakeCase();
       buffer.writeln(
           "import '../infrastructure/models/${actionName}_model.dart';");
     }
 
     for (var pathEntry in categoryPaths) {
-      String routeName = getRouteName(pathEntry.fullRoute);
+      String routeName =
+          getRouteName(pathEntry.fullRoute, pathEntry.httpMethod.name);
       String actionName = routeName.toSnakeCase();
       buffer.writeln("import '../domain/entities/${actionName}_param.dart';");
     }
@@ -69,7 +71,8 @@ class ApplicationGenerator {
 """);
 
     for (var pathEntry in categoryPaths) {
-      String routeName = getRouteName(pathEntry.fullRoute);
+      String routeName =
+          getRouteName(pathEntry.fullRoute, pathEntry.httpMethod.name);
       String actionName = routeName;
 
       String methodName = actionName[0].toLowerCase() + actionName.substring(1);

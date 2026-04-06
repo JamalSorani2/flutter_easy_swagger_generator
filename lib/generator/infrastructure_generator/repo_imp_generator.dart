@@ -55,7 +55,7 @@ class RepoImpGenerator {
 
     // Add model imports for each route
     for (var path in categoryPaths) {
-      String routeName = getRouteName(path.fullRoute);
+      String routeName = getRouteName(path.fullRoute, path.httpMethod.name);
       String actionName = routeName.toSnakeCase();
       final importPath = ImportPath(
         actionName: actionName,
@@ -66,7 +66,7 @@ class RepoImpGenerator {
 
     // Add entity imports for each route
     for (var path in categoryPaths) {
-      String routeName = getRouteName(path.fullRoute);
+      String routeName = getRouteName(path.fullRoute, path.httpMethod.name);
       String actionName = routeName.toSnakeCase();
       final importPath = ImportPath(
         actionName: actionName,
@@ -91,7 +91,7 @@ class RepoImpGenerator {
 
     // Methods for each endpoint
     for (var path in categoryPaths) {
-      String routeName = getRouteName(path.fullRoute);
+      String routeName = getRouteName(path.fullRoute, path.httpMethod.name);
       String actionName = routeName;
       buffer.writeln();
 

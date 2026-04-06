@@ -48,7 +48,8 @@ class ProviderClassGenerator {
 
   void generateProvider(RouteInfo routeInfo) {
     String endPoint = 'Provider';
-    String routeName = getRouteName(routeInfo.fullRoute);
+    String routeName =
+        getRouteName(routeInfo.fullRoute, routeInfo.httpMethod.name);
     String className = '$routeName$endPoint';
 
     String moduleName = getCategory(routeInfo.fullRoute);

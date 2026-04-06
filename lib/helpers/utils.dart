@@ -11,7 +11,7 @@ import 'package:flutter_easy_swagger_generator/helpers/imports.dart';
 ///
 /// If the path is empty after cleaning, it falls back to
 /// [ConstantsHelper.generalCategory].
-String getRouteName(String path) {
+String getRouteName(String path, String method) {
   path = cleanPath(path);
   List<String> parts = path.split('/')..removeWhere((p) => p.isEmpty);
 
@@ -35,7 +35,7 @@ String getRouteName(String path) {
   if (parts.isEmpty) return ConstantsHelper.generalCategory;
 
   String entity = _toPascalCase(parts[0]);
-  String action = parts.length > 1 ? _toPascalCase(parts[1]) : "";
+  String action = parts.length > 1 ? _toPascalCase(parts.last) : "";
 
   final Map<String, String> verbMap = {
     "GetAll": "GetAll",
@@ -52,11 +52,20 @@ String getRouteName(String path) {
     "Refresh": "Refresh",
     "LogIn": "Login",
     "LoginAsGuest": "LoginAsGuest",
+    "post": "Post",
+    "get": "Get",
+    "delete": "Delete",
+    "put": "Put",
   };
 
-  String mappedAction = verbMap[action] ?? action;
+  String mappedAction = verbMap[method] ?? action;
+
   if (!mappedAction.contains(entity)) {
     mappedAction = mappedAction + entity;
+  }
+
+  if (!mappedAction.contains(action)) {
+    mappedAction = mappedAction + action;
   }
 
   if (mappedAction.startsWith("GetAll") && !entity.endsWith("s")) {

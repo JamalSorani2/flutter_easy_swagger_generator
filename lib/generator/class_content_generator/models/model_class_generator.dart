@@ -39,7 +39,8 @@ class ModelClassGenerator {
   /// represents the 200-response body for the route (if present).
   void generateClass(RouteInfo routeInfo) {
     String endPoint = 'Model';
-    String routeName = getRouteName(routeInfo.fullRoute);
+    String routeName =
+        getRouteName(routeInfo.fullRoute, routeInfo.httpMethod.name);
     String className = '$routeName$endPoint';
 
     String moduleName = getCategory(routeInfo.fullRoute);

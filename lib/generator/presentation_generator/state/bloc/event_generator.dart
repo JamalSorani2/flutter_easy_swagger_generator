@@ -38,7 +38,7 @@ abstract class ${capitalizedCategory}Event {}
 
     // Generate event class for each API action with response 200
     for (var path in categoryPaths) {
-      String routeName = getRouteName(path.fullRoute);
+      String routeName = getRouteName(path.fullRoute, path.httpMethod.name);
       String actionName = routeName;
       String actionEventName = actionName;
       if (actionEventName == capitalizedCategory) {

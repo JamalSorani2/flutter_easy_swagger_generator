@@ -47,7 +47,7 @@ class RoutesGenerator {
         formattedGroups.addAll(
           routes.map(
             (e) =>
-                "  static const String ${getRouteName(e.fullRoute).toCamelCase()} = '${e.fullRoute.replaceAll('/api/', '')}';",
+                "  static const String ${getRouteName(e.fullRoute, e.httpMethod.name).toCamelCase()} = '${e.fullRoute.replaceAll('/api/', '')}';",
           ),
         );
         formattedGroups.add('');

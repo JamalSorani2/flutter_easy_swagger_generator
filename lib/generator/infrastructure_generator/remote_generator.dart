@@ -39,14 +39,14 @@ class RemoteGenerator {
         "import '../../../../../common/network/exception/error_handler.dart';");
 
     for (var path in categoryPaths) {
-      String routeName = getRouteName(path.fullRoute);
+      String routeName = getRouteName(path.fullRoute, path.httpMethod.name);
       String actionName = routeName.toSnakeCase();
 
       buffer.writeln("import '../../models/${actionName}_model.dart';");
     }
 
     for (var path in categoryPaths) {
-      String routeName = getRouteName(path.fullRoute);
+      String routeName = getRouteName(path.fullRoute, path.httpMethod.name);
       String actionName = routeName.toSnakeCase();
       final importPath = ImportPath(
         actionName: actionName,
@@ -64,7 +64,7 @@ class RemoteGenerator {
         "  const ${(category[0].toUpperCase() + category.substring(1))}Remote(Dio dio) : _dio = dio;");
 
     for (var path in categoryPaths) {
-      String routeName = getRouteName(path.fullRoute);
+      String routeName = getRouteName(path.fullRoute, path.httpMethod.name);
       String actionName = routeName;
 
       String methodName = actionName[0].toLowerCase() + actionName.substring(1);
